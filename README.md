@@ -9,3 +9,6 @@ inicio de repositorio
 - Andres camilo almanza
 - Miquel Guaman
 - juan Diaz
+
+- ssh-keygen -t ed25519 -C "tu_correo@example.com"
+
