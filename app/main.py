@@ -14,4 +14,5 @@ import numpy as np
 print("kamilo eso el mejor")
 print("mediapipe:", mp.__version__)
 print("opencv:", cv2.__version__)
+print("hola como estas")
 print("numpy:", np.__version__)
