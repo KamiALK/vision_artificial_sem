@@ -12,6 +12,7 @@ import numpy as np
 # asdasdasd
 
 print("hola como estas")
+print("hola como estas")
 #
 print("kamilo eso el mejor")
 print("mediapipe:", mp.__version__)
