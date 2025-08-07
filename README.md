@@ -4,20 +4,12 @@ los mejores
 
 inicio de repositorio
 
-## Participantes
+## comandos para subir cabios a github
 
-- Andres camilo almanza
-- Miquel Guaman
-- juan Diaz
+```bash
+git add .
+gitr commit -m "mensaje de commit"
+git push origin dev
+```
 
-epa colombia
-
-intento dos de pull request
-intento tres
-intento 4
-
-# jose
-
-### vision artificial
-
-[www.github.io](http://www.github.io)
+[NOTICIA] El problema de dependencias con python 3.13 es por mediper de la librería `pillow` que no es compatible con python 3.13, por lo que se recomienda usar python 3.12 o inferior.
