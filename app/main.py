@@ -5,11 +5,8 @@ import numpy as np
 # leer la documentacion de opbjenctron
 #
 # https://github.com/google-research-datasets/Objectron
-# lalalo
-# asdfasdf
-# asdasdas
-# sasdasd
 #
+# asdasd
 
 #
 print("kamilo eso el mejor")
