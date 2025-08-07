@@ -1,4 +1,5 @@
  pasos para pull request 
- 1. crear rama de prueba 
- 2. esta es la segunda pull
+ 1. crear rama de dev
+
+crear directorios de desarrollo del proyecto 
 
