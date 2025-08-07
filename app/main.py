@@ -6,6 +6,7 @@ import numpy as np
 #
 # https://github.com/google-research-datasets/Objectron
 #
+# asdasd
 
 #
 print("kamilo eso el mejor")
