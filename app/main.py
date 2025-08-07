@@ -6,8 +6,12 @@ import numpy as np
 #
 # https://github.com/google-research-datasets/Objectron
 #
+# google-research-datasets
+#
 # asdasd
+# asdasdasd
 
+print("hola como estas")
 #
 print("kamilo eso el mejor")
 print("mediapipe:", mp.__version__)
