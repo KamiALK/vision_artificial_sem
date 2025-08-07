@@ -5,7 +5,9 @@ import numpy as np
 # leer la documentacion de opbjenctron
 #
 # https://github.com/google-research-datasets/Objectron
-# lalal
+# lalalo
+# asdfasdf
+#
 #
 
 #
