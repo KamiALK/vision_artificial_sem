@@ -1,0 +1,13 @@
+docker-compose up -d
+
+docker exec -it vision_artificial_sem_mongo_1 /bin/bash
+
+mongosh
+
+
+use admin
+
+db.auth('root','example')
+
+
+show dbs
