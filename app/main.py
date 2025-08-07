@@ -5,6 +5,10 @@ import numpy as np
 # leer la documentacion de opbjenctron
 #
 # https://github.com/google-research-datasets/Objectron
+# lalal
+#
+
+#
 print("kamilo eso el mejor")
 print("mediapipe:", mp.__version__)
 print("opencv:", cv2.__version__)
