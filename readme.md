@@ -28,3 +28,16 @@ configurar driver properties:
 cambiar esta opcion a true
 - allowPublicKeyRetrival True
 
+## dependencias
+
+```python
+
+
+pip install sqlalchemy python-dotenv
+```
+
+mirar el ip del contenedor
+```bash
+
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' mysql1
+```
