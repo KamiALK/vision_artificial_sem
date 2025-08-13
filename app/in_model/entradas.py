@@ -25,7 +25,12 @@ class Gsmarena:
     # This function crawl the html code of the requested URL.
     def crawl_html_page(self, sub_url):
         url = self.url + sub_url  # Url for html content parsing.
-        header = {"User-Agent": "#user agent of your system  "}
+
+        header = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/115.0.0.0 Safari/537.36"
+        }
         time.sleep(30)  # SO that your IP does not gets blocked by the website
         # Handing the connection error of the url.
         try:
