@@ -1,20 +1,18 @@
 # Install dependencies as needed:
+# kagle_phone_model.py
 # pip install kagglehub[pandas-datasets]
-import kagglehub
-from kagglehub import KaggleDatasetAdapter
 
-# Set the path to the file you'd like to load
-file_path = ""
+import pandas as pd
 
-# Load the latest version
-df = kagglehub.load_dataset(
-    KaggleDatasetAdapter.PANDAS,
-    "abdurrahman22224/smartphone-new-data",
-    file_path,
-    # Provide any additional arguments like
-    # sql_query or pandas_kwargs. See the
-    # documenation for more information:
-    # https://github.com/Kaggle/kagglehub/blob/main/README.md#kaggledatasetadapterpandas
+df = pd.read_csv(
+    "/home/kami/proyectos/vision_artificial_sem/app/in_model/smartphones_data.csv.csv"
 )
 
-print("First 5 records:", df.head())
+# Mostrar solo la columna 'name'
+# obtencion de los nombres de los celulares
+df_name = df[["Name"]]
+print(df_name.head())
+# print(df)
+
+# Guardar como CSV
+df_name.to_csv("smartphones_names.csv.csv", index=False)
