@@ -22,7 +22,7 @@ class Gsmarena:
             "Chrome/115.0.0.0 Safari/537.36"
         }
         time.sleep(2)
-        page = requests.get(url, timeout=10, headers=header)
+        page = requests.get(url, timeout=None, headers=header)
         return BeautifulSoup(page.text, "html.parser")
 
     def crawl_phone_brands(self):

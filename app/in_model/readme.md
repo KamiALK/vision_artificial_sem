@@ -18,7 +18,7 @@ rm /home/kami/proyectos/vision_artificial_sem/app/in_model/smartphones-dataset.z
 ```
 - Es importante tener el kaggle.json
 - Tener Instalado el entorno 
-- Tener 
+- Tener correr el archivo entrada para descargar las fotos 
 
 
 
