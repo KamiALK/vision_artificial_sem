@@ -6,49 +6,25 @@ import time
 import json
 
 
-# Class gsmarena scrap the website phones models and its devices and save to csv file individually.
 class Gsmarena:
-    # Constructor to initialize common useful varibales throughout the program.
     def __init__(self):
         self.phones = []
         self.features = ["Brand", "Model Name", "Model Image"]
-        self.temp1 = []
-        self.phones_brands = []
-        self.url = "https://www.gsmarena.com/"  # GSMArena website url
-        self.new_folder_name = (
-            "GSMArenaDataset"  # Folder name on which files going to save.
-        )
-        self.absolute_path = (
-            os.popen("pwd").read().strip() + "/" + self.new_folder_name
-        )  # It create the absolute path of the GSMArenaDataset folder.
+        self.url = "https://www.gsmarena.com/"
+        self.new_folder_name = "GSMArenaDataset"
+        self.absolute_path = os.path.join(os.getcwd(), self.new_folder_name)
 
-    # This function crawl the html code of the requested URL.
     def crawl_html_page(self, sub_url):
-        url = self.url + sub_url  # Url for html content parsing.
-
+        url = self.url + sub_url
         header = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
             "AppleWebKit/537.36 (KHTML, like Gecko) "
             "Chrome/115.0.0.0 Safari/537.36"
         }
-        time.sleep(30)  # SO that your IP does not gets blocked by the website
-        # Handing the connection error of the url.
-        try:
-            page = requests.get(url, timeout=5, headers=header)
-            soup = BeautifulSoup(
-                page.text, "html.parser"
-            )  # It parses the html data from requested url.
-            return soup
+        time.sleep(2)
+        page = requests.get(url, timeout=10, headers=header)
+        return BeautifulSoup(page.text, "html.parser")
 
-        except ConnectionError as err:
-            print("Please check your network connection and re-run the script.")
-            exit()
-
-        except Exception:
-            print("Please check your network connection and re-run the script.")
-            exit()
-
-    # This function crawl mobile phones brands and return the list of the brands.
     def crawl_phone_brands(self):
         phones_brands = []
         soup = self.crawl_html_page("makers.php3")
@@ -63,71 +39,40 @@ class Gsmarena:
             phones_brands.append(temp)
         return phones_brands
 
-    # This function crawl mobile phones brands models links and return the list of the links.
     def crawl_phones_models(self, phone_brand_link):
         links = []
         nav_link = []
         soup = self.crawl_html_page(phone_brand_link)
         nav_data = soup.find(class_="nav-pages")
+
         if not nav_data:
             nav_link.append(phone_brand_link)
         else:
-            nav_link = nav_data.findAll("a")
+            nav_link = nav_data.find_all("a")
             nav_link = [link["href"] for link in nav_link]
             nav_link.append(phone_brand_link)
             nav_link.insert(0, nav_link.pop())
+
         for link in nav_link:
             soup = self.crawl_html_page(link)
             data = soup.find(class_="section-body")
-            for line1 in data.findAll("a"):
+            if not data:
+                continue
+            for line1 in data.find_all("a"):
                 links.append(line1["href"])
 
         return links
 
-    # This function crawl mobile phones specification and return the list of the all devices list of single brand.
-    # def crawl_phones_models_specification(self, link, phone_brand):
-    #     phone_data = {}
-    #     soup = self.crawl_html_page(link)
-    #     model_name = soup.find(class_="specs-phone-name-title").text
-    #     model_img_html = soup.find(class_="specs-photo-main")
-    #     model_img = model_img_html.find("img")["src"]
-    #     phone_data.update({"Brand": phone_brand})
-    #     phone_data.update({"Model Name": model_name})
-    #     phone_data.update({"Model Image": model_img})
-    #     temp = []
-    #     for data1 in range(len(soup.findAll("table"))):
-    #         table = soup.findAll("table")[data1]
-    #         for line in table.findAll("tr"):
-    #             temp = []
-    #             for l in line.findAll("td"):
-    #                 text = l.getText()
-    #                 text = text.strip()
-    #                 text = text.lstrip()
-    #                 text = text.rstrip()
-    #                 text = text.replace("\n", "")
-    #                 temp.append(text)
-    #                 if temp[0] in phone_data.keys():
-    #                     temp[0] = temp[0] + "_1"
-    #                 if temp[0] not in self.features:
-    #                     self.features.append(temp[0])
-    #             if not temp:
-    #                 continue
-    #             else:
-    #                 phone_data.update({temp[0]: temp[1]})
-    #     return phone_data
-
     def crawl_phones_models_specification(self, link, phone_brand):
         phone_data = {}
         soup = self.crawl_html_page(link)
-        model_name = soup.find(class_="specs-phone-name-title").text
+        model_name = soup.find(class_="specs-phone-name-title").text.strip()
         model_img_html = soup.find(class_="specs-photo-main")
         model_img = model_img_html.find("img")["src"]
 
-        # Crear carpeta para imágenes
         img_folder = os.path.join(self.absolute_path, "images")
         os.makedirs(img_folder, exist_ok=True)
 
-        # Guardar imagen localmente
         img_filename = (
             f"{phone_brand}_{model_name.replace('/', '_').replace(' ', '_')}.jpg"
         )
@@ -139,44 +84,23 @@ class Gsmarena:
                 handler.write(img_data)
         except Exception as e:
             print(f"Error descargando imagen {model_name}: {e}")
-            img_path = model_img  # En caso de error, dejamos la URL
+            img_path = model_img
 
         phone_data.update({"Brand": phone_brand})
         phone_data.update({"Model Name": model_name})
-        phone_data.update({"Model Image": img_path})  # Guardar ruta local en vez de URL
-
-        for table in soup.findAll("table"):
-            for line in table.findAll("tr"):
-                temp = []
-                for l in line.findAll("td"):
-                    text = l.getText().strip().replace("\n", "")
-                    temp.append(text)
-                    if temp[0] in phone_data.keys():
-                        temp[0] = temp[0] + "_1"
-                    if temp[0] not in self.features:
-                        self.features.append(temp[0])
-                if temp:
-                    phone_data.update({temp[0]: temp[1]})
+        phone_data.update({"Model Image": img_path})
 
         return phone_data
 
-        # This function create the folder 'GSMArenaDataset'.
-
     def create_folder(self):
         if not os.path.exists(self.new_folder_name):
-            os.system("mkdir " + self.new_folder_name)
-            print("Creating ", self.new_folder_name, " Folder....")
-            time.sleep(6)
-            print("Folder Created.")
+            os.makedirs(self.new_folder_name)
+            print(f"Carpeta {self.new_folder_name} creada.")
         else:
-            print(self.new_folder_name, "directory already exists")
-
-        # This function check the csv file exists in the 'GSMArenaDataset' directory or not.
+            print(f"{self.new_folder_name} directory already exists")
 
     def check_file_exists(self):
         return os.listdir(self.absolute_path)
-
-        # This function save the devices specification to csv file.
 
     def save_specification_to_file(self):
         phone_brand = self.crawl_phone_brands()
@@ -190,36 +114,25 @@ class Gsmarena:
                 print("Working on", brand[0].title(), "brand.")
                 for value in link:
                     datum = self.crawl_phones_models_specification(value, brand[0])
-                    datum = {
-                        k: v.replace("\n", " ").replace("\r", " ")
-                        for k, v in datum.items()
-                    }
                     phones_data.append(datum)
                     print("Completed ", model_value, "/", len(link))
                     model_value += 1
                 with open(
-                    self.absolute_path + "/" + brand[0].title() + ".csv", "w"
+                    os.path.join(self.absolute_path, brand[0].title() + ".csv"),
+                    "w",
+                    newline="",
                 ) as file:
                     dict_writer = csv.DictWriter(file, fieldnames=self.features)
                     dict_writer.writeheader()
-                    str_phones_data = json.dumps(phones_data)
-                    encoded = str_phones_data.encode("utf-8")
-                    load_list = json.loads(encoded)
-                    for dicti in load_list:
-                        dict_writer.writerow(
-                            {k: v.encode("utf-8") for k, v in dicti.items()}
-                        )
+                    dict_writer.writerows(phones_data)
                 print("Data loaded in the file")
             else:
                 print(brand[0].title() + ".csv file already in your directory.")
 
 
-# This is the main function which create the object of Gsmarena class and call the save_specificiton_to_file function.
-i = 1
-while i == 1:
-    if __name__ == "__main__":
+if __name__ == "__main__":
+    try:
         obj = Gsmarena()
-        try:
-            obj.save_specification_to_file()
-        except KeyboardInterrupt:
-            print("File has been stopped due to KeyBoard Interruption.")
+        obj.save_specification_to_file()
+    except KeyboardInterrupt:
+        print("File has been stopped due to KeyBoard Interruption.")
