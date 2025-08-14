@@ -4,6 +4,34 @@ import csv
 import os
 import time
 import json
+import random
+
+
+USER_AGENTS = [
+    # Windows - Chrome
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:124.0) Gecko/20100101 Firefox/124.0",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edg/124.0.0.0 Safari/537.36",
+    # MacOS - Chrome / Safari / Firefox
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) Gecko/20100101 Firefox/124.0",
+    # Linux - Chrome / Firefox
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) Gecko/20100101 Firefox/124.0",
+    # Android - Chrome / Samsung / Opera
+    "Mozilla/5.0 (Linux; Android 14; Pixel 7 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36",
+    "Mozilla/5.0 (Linux; Android 14; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36",
+    "Mozilla/5.0 (Linux; Android 13; SM-G991B) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/24.0 Chrome/124.0.0.0 Mobile Safari/537.36",
+    "Mozilla/5.0 (Linux; Android 13; CPH2273) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36",
+    "Mozilla/5.0 (Linux; Android 12; V2027) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36",
+    # iPhone / iPad - Safari
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1",
+    "Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
+    # Opera Desktop
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 OPR/109.0.0.0",
+]
 
 
 class Gsmarena:
@@ -16,27 +44,65 @@ class Gsmarena:
 
     def crawl_html_page(self, sub_url):
         url = self.url + sub_url
-        header = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/115.0.0.0 Safari/537.36"
-        }
-        time.sleep(2)
-        page = requests.get(url, timeout=None, headers=header)
-        return BeautifulSoup(page.text, "html.parser")
+        header = {"User-Agent": random.choice(USER_AGENTS)}
+
+        # Pausa para no saturar el servidor
+        time.sleep(random.uniform(3, 8))
+
+        try:
+            # Intentar hasta 3 veces si falla
+            for attempt in range(3):
+                try:
+                    page = requests.get(url, timeout=None, headers=header)
+                    page.raise_for_status()
+                    soup = BeautifulSoup(page.text, "html.parser")
+
+                    # Verificar que no sea una página vacía o bloqueada
+                    if not soup.find("html") or "Access Denied" in soup.text:
+                        print(f"[WARN] Página vacía o bloqueada: {url}")
+                        return None
+
+                    return soup
+
+                except requests.exceptions.ReadTimeout:
+                    print(f"[TIMEOUT] Intento {attempt + 1}/3 en {url}")
+                    time.sleep(5)
+
+            print(f"[ERROR] No se pudo obtener {url} después de 3 intentos.")
+            return None
+
+        except requests.exceptions.RequestException as e:
+            print(f"[ERROR] Fallo al acceder {url}: {e}")
+            return None
 
     def crawl_phone_brands(self):
         phones_brands = []
         soup = self.crawl_html_page("makers.php3")
-        table = soup.find_all("table")[0]
+
+        # Verificar si se obtuvo algo
+        if soup is None:
+            print("[ERROR] No se pudo cargar la página de marcas.")
+            return []
+
+        # Verificar si hay tablas
+        tables = soup.find_all("table")
+        if not tables:
+            print(f"[WARN] No se encontró ninguna tabla en {self.url + 'makers.php3'}")
+            return []
+
+        table = tables[0]
         table_a = table.find_all("a")
         for a in table_a:
-            temp = [
-                a["href"].split("-")[0],
-                a.find("span").text.split(" ")[0],
-                a["href"],
-            ]
-            phones_brands.append(temp)
+            try:
+                temp = [
+                    a["href"].split("-")[0],
+                    a.find("span").text.split(" ")[0],
+                    a["href"],
+                ]
+                phones_brands.append(temp)
+            except Exception as e:
+                print(f"[WARN] Error procesando marca: {a} → {e}")
+
         return phones_brands
 
     def crawl_phones_models(self, phone_brand_link):
