@@ -41,5 +41,6 @@ engine = create_engine(
 Session = sessionmaker(autoflush=False, autocommit=False, bind=engine)
 
 
+# comentado porque esta pendiente de implementeAR
 # Base.metadata.create_all(bind=engine)
 # Session.close_all()
