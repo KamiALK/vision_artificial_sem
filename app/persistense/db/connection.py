@@ -7,11 +7,32 @@
 # requiere un archivo .env
 # reemplazar el valor de .env.example y quitar el.example
 #
-#
-# en claso de que elijas la instalcion de mongo dejo la documentacion
-# https://www.mongodb.com/docs/mongodb-shell/install/
+# ######################## joel avances  #######################33
 #
 #
-# documentarion for connection with mongo
-# https://www.mongodb.com/docs/drivers/motor/
 #
+# reunion de avances persistencia
+# https://hub.docker.com/_/mongo
+#
+# https://www.mongodb.com/docs/languages/python/pymongo-driver/current/connect/#std-label-pymongo-connect
+#
+# en caso de conectar a una base de datos de mongo attlas usar el siguinete enlac e
+#
+# https://www.mongodb.com/docs/languages/python/pymongo-driver/current/get-started/#std-label-pymongo-get-started
+from pymongo import MongoClient
+
+# "mongodb://<db_username>:<db_password>@<hostname>:<port>"
+try:
+    db = "ip_contenedor de base de datos"
+    client = MongoClient(
+        "mongodb://root:example@192.168.144.3:27017/",
+    )
+
+    client.admin.command("ping")
+
+    print("Connected successfully")
+
+    client.close()
+except Exception as e:
+    # logica para errores del programa
+    print(e)
