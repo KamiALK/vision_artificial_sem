@@ -6,18 +6,11 @@ import numpy as np
 #
 # https://github.com/google-research-datasets/Objectron
 #
+#kamilo estuvo aqui
 # google-research-datasets
 # asdfasdf
 # asdasd
 # asdasdasd
 
-print("hola como estas")
 
 
-print("hola como estas")
-print("hola como estas")
-#
-print("kamilo eso el mejor")
-print("mediapipe:", mp.__version__)
-print("opencv:", cv2.__version__)
-print("numpy:", np.__version__)
