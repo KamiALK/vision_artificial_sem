@@ -40,6 +40,6 @@ engine = create_engine(
 )
 Session = sessionmaker(autoflush=False, autocommit=False, bind=engine)
 
-
+# estas ultimas dos lineas de codigo importan los modelos
 # Base.metadata.create_all(bind=engine)
 # Session.close_all()
