@@ -12,11 +12,5 @@ import numpy as np
 # asdasd
 # asdasdasd
 
-print("hola como estas")
-print("hola como estas")
-print("hola como estas")
-#
-print("kamilo eso el mejor")
-print("mediapipe:", mp.__version__)
-print("opencv:", cv2.__version__)
-print("numpy:", np.__version__)
+
+
