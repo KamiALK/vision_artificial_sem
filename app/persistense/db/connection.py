@@ -18,6 +18,19 @@
 #
 # en caso de conectar a una base de datos de mongo attlas usar el siguinete enlac e
 #
+#ocker-compose up -d
+#
+# docker exec -it vision_artificial_sem_mongo_1 /bin/bash
+#
+# mongosh
+#
+#
+# use admin
+#
+# db.auth('root','example')
+#
+#
+# show dbs
 # https://www.mongodb.com/docs/languages/python/pymongo-driver/current/get-started/#std-label-pymongo-get-started
 from pymongo import MongoClient
 
